@@ -1,6 +1,4 @@
-**==================**
-**ODOO NOTIFICATIONS**
-**==================**
+**==================ODOO NOTIFICATIONS==================**
 
 *SEND NOTIFICATION DESKTOP WINDOWS TO UBUNTU*
 
