@@ -1,7 +1,10 @@
 # odoo_notificaciones
-=================================================
-ODOO NOTIFICATIONS SEND DESKTOP WINDOWS TO UBUNTU
-=================================================
+==================
+ODOO NOTIFICATIONS 
+==================
+
+SEND NOTIFICATION DESKTOP WINDOWS TO UBUNTU
+
 ===========
 INSTALATION
 ===========
