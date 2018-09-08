@@ -1,12 +1,12 @@
-**==================
-ODOO NOTIFICATIONS 
-==================**
+**==================**
+**ODOO NOTIFICATIONS**
+**==================**
 
-SEND NOTIFICATION DESKTOP WINDOWS TO UBUNTU
+*SEND NOTIFICATION DESKTOP WINDOWS TO UBUNTU*
 
-===========
-INSTALATION
-===========
+**===========**
+**INSTALATION**
+**===========**
 1. Download app
 2. Go to odoo
 3. Place in developer mode
