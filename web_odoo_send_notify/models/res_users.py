@@ -7,18 +7,19 @@ from odoo import api, fields, models, _
 from odoo.addons.web.controllers.main import clean_action
 from odoo.http import request
 from odoo.modules.module import get_module_resource
+from multiprocessing import Process, Queue
 import requests
 import base64
 import json
 import random
 import odoo
 import re
+import time,  os
 TAG_RE = re.compile(r'<[^>]+>')
 def json_dump(v):
     return json.dumps(v, separators=(',', ':'))
 class ResUsers(models.Model):
     _inherit = 'res.users'
-
     @api.multi
     @api.depends('create_date')
     def _compute_channel_names(self):
@@ -74,6 +75,7 @@ class SendNotifyResUsers(models.Model):
     _name = 'res.user.notify'
     _description = 'Notificaciones chrome para usuarios'
     _order = 'id'
+    proccess_ids_parent = []
     status = fields.Char("Estado")
     @api.multi
     def _notify_chrome(self, puerto, title="", message="", modulo_imagen="", direc_imagen="", name_imagen=""):
@@ -98,9 +100,29 @@ class SendNotifyResUsers(models.Model):
             # payload ={"command": "notification", "data":{"type":"basic", "title":"Bien venida Maricarmen", "message":"Hello!"}}
         if type_message =="basic":
             payload ={"command": "notification", "data":{"type":"basic", "title": title, "message":message}}
-        response = requests.post("http://"+ip_user_ip+":"+puerto, json=payload)
+        try:
+            #queue = Queue() #use multiproccess for no response ip
+            p = Process(target=self.call_response, args=(ip_user_ip, puerto, payload))
+            p.start()
+            self.proccess_ids_parent.append(p.pid)
+            response =""
+        except requests.exceptions.RequestException as e:
+            response = 'No se envio mensaje a destinatario '+str(ip_user_ip+":"+puerto)
+            self.kill_subproccess()
         return response
-            
+    @api.multi  #Funcion multiproceso para cada usuario y asi si hay un error en la respuesta no frene el navegador
+    def call_response(self, ip_user_ip, puerto, payload):
+        try:
+            k = requests.post("http://"+ip_user_ip+":"+puerto, json=payload)
+        except requests.exceptions.RequestException as e:
+            print e
+            k = e
+        return k
+    @api.multi
+    def kill_subproccess(self):
+        time.sleep(2)
+        for proceso_kill in self.proccess_ids_parent :
+            os.system('sudo kill -9 '+str(proceso_kill))             
 # class Bus_notify(models.Model):
 #     _inherit = 'bus.bus'
 #     @api.model
@@ -138,6 +160,6 @@ class Message_notify(models.Model):
                         mesage_utf = u''.join((message.body)).encode('utf-8').strip()
                         message_no_html = TAG_RE.sub('', mesage_utf)
 #                         message_utf = u''.join((message_no_html).encode('utf-8').strip())
-                        b = self.env['res.user.notify']._notify_chrome_chat(user_send.ip_notify, user_send.puerto_notify, "basic", str(message.display_name), str(message_no_html))
+                        b = self.env['res.user.notify']._notify_chrome_chat(user_send.ip_notify, user_send.puerto_notify, "basic", str(message.display_name), str(message_no_html))             
         return b
         
