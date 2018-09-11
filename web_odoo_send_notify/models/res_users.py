@@ -153,6 +153,7 @@ class Message_notify(models.Model):
     @api.multi
     def _notify(self, message):
         super(Message_notify, self)._notify(message)
+        b=""
         for chanel_id in message.channel_ids.channel_partner_ids:
             if chanel_id.id != message.author_id.id:
                 for user_send in chanel_id.user_ids:
