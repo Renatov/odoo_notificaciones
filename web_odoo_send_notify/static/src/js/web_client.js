@@ -5,6 +5,7 @@ var core = require('web.core'),
     WebClient = require('web.WebClient'),
     base_bus = require('bus.bus'),
     Widget = require('web.Widget');
+var Session = require('web.session');
 
 
 Widget.include({
@@ -66,8 +67,9 @@ WebClient.include({
         this._super();
     },
     start_polling: function() {
-        this.channel_warning = 'notify_warning_' + this.session.uid;
-        this.channel_info = 'notify_info_' + this.session.uid;
+    	var Session = require('web.session');
+        this.channel_warning = 'notify_warning_' + Session.uid;
+        this.channel_info = 'notify_info_' + Session.uid;
         base_bus.bus.add_channel(this.channel_warning);
         base_bus.bus.add_channel(this.channel_info);
         base_bus.bus.on('notification', this, this.bus_notification);
