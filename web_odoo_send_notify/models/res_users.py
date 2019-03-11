@@ -115,7 +115,7 @@ class SendNotifyResUsers(models.Model):
         try:
             k = requests.post("http://"+ip_user_ip+":"+puerto, json=payload)
         except requests.exceptions.RequestException as e:
-            print e
+            print (e)
             k = e
         return k
     @api.multi
@@ -123,31 +123,7 @@ class SendNotifyResUsers(models.Model):
         time.sleep(2)
         for proceso_kill in self.proccess_ids_parent :
             os.system('sudo kill -9 '+str(proceso_kill))             
-# class Bus_notify(models.Model):
-#     _inherit = 'bus.bus'
-#     @api.model
-#     def sendmany(self, notifications):
-#         channels = set()
-#         for channel, message in notifications:
-#             channels.add(channel)
-#             values = {
-#                 "channel": json_dump(channel),
-#                 "message": json_dump(message)
-#             }
-#             self.sudo().create(values)
-#             if random.random() < 0.01:
-#                 self.gc()
-#         if channels:
-#             # We have to wait until the notifications are commited in database.
-#             # When calling `NOTIFY imbus`, some concurrent threads will be
-#             # awakened and will fetch the notification in the bus table. If the
-#             # transaction is not commited yet, there will be nothing to fetch,
-#             # and the longpolling will return no notification.
-#             def notify():
-#                 with odoo.sql_db.db_connect('postgres').cursor() as cr:
-#                     cr.execute("notify imbus, %s", (json_dump(list(channels)),))
-#                 #self.env['res.user.notify']._notify_chrome("Bien!", "Se elimino con exito! numero=",  'hr_fingerprint', 'static/src/img', 'correctoazul.png' )
-#             self._cr.after('commit', notify)
+
 class Message_notify(models.Model):
     _inherit = 'mail.channel'
     @api.multi
@@ -159,8 +135,7 @@ class Message_notify(models.Model):
                 for user_send in chanel_id.user_ids:
                     if (user_send.ip_notify!=False and user_send.puerto_notify!=False):
                         mesage_utf = u''.join((message.body)).encode('utf-8').strip()
-                        message_no_html = TAG_RE.sub('', mesage_utf)
-#                         message_utf = u''.join((message_no_html).encode('utf-8').strip())
+                        message_no_html = TAG_RE.sub('', mesage_utf.decode("utf-8"))
                         b = self.env['res.user.notify']._notify_chrome_chat(user_send.ip_notify, user_send.puerto_notify, "basic", str(message.display_name), str(message_no_html))             
         return b
         

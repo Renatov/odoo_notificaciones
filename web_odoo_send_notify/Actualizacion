@@ -1,2 +1,8 @@
+					25/01/2019
+1. Se migro a la version 12 odoo, nwjs creado para ubuntu 18 32 y 64 bits
+					30/11/2018
+1. Se mejoro web_client.js ya que daba problemas con el web_refresh,se borro la funcion start_polling: linea 69
+					28/11/2018
+1. Se actualizo para la version 11 de odoo
 					07/09/2018
 1. Se agrego multiproccesin para independizar la llamada a cada usuari y enviarle el mensaje
