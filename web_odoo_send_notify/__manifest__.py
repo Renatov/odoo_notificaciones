@@ -8,8 +8,8 @@
     'version': '12.0',
     'description': 'Web send Notify',
     'license': 'AGPL-3',
-    'author': 'PROSEBOL',
-    'website': 'https://www.prosebol.com/',
+    'author': 'PROSBOL',
+    'website': 'https://www.prosbol.com/',
     'depends': ['base','web','bus', 'mail'],
     'data': [
         'views/web_notify.xml'
