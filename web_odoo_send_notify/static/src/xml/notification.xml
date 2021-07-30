@@ -22,17 +22,9 @@
 </t>
 
 <t t-name="InteractiveNotification" t-extend="Notification">
-    <t t-jquery=".o_notification_content" t-operation="after">
+    <t t-jquery=".o_notification_content" t-operation="append">
         <t t-call="Notification.reload"/>
         <t t-call="Notification.do_action"/>
     </t>
 </t>
-
-<t t-name="InteractiveWarning" t-extend="Warning">
-    <t t-jquery=".o_notification_content" t-operation="after">
-        <t t-call="Notification.reload"/>
-        <t t-call="Notification.do_action"/>
-    </t>
-</t>
-
 </templates>

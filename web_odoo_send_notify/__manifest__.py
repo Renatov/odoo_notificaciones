@@ -4,17 +4,13 @@
 
 {
     'name': 'Web odoo send notifications',
-    'summary': """
-        Send notification messages to user""",
-    'version': '10.0.1.1.0',
+    'summary': """Send notification messages to desktop user""",
+    'version': '13.0',
     'description': 'Web send Notify',
     'license': 'AGPL-3',
     'author': 'PROSBOL',
     'website': 'https://www.prosbol.com/',
-    'depends': ['base',
-        'web',
-        'bus', 'mail',
-    ],
+    'depends': ['base','web','bus', 'mail'],
     'data': [
         'views/web_notify.xml'
     ],

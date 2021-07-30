@@ -1,10 +1,11 @@
-odoo.define('web_notify.WebClient', function (require) {
+odoo.define('web_odoo_send_notify.WebClient', function (require) {
 "use strict";
 
-var core = require('web.core'),
-    WebClient = require('web.WebClient'),
-    base_bus = require('bus.bus'),
-    Widget = require('web.Widget');
+var core = require('web.core');
+var WebClient = require('web.WebClient');
+var base_bus = require('bus.BusService');
+var Widget = require('web.Widget');
+var Session = require('web.session');
 
 
 Widget.include({
@@ -65,14 +66,30 @@ WebClient.include({
         base_bus.bus.off('notification', this, this.bus_notification);
         this._super();
     },
-    start_polling: function() {
-        this.channel_warning = 'notify_warning_' + this.session.uid;
-        this.channel_info = 'notify_info_' + this.session.uid;
-        base_bus.bus.add_channel(this.channel_warning);
-        base_bus.bus.add_channel(this.channel_info);
-        base_bus.bus.on('notification', this, this.bus_notification);
-        base_bus.bus.start_polling();
+    start_polling: function () {
+        this.channel_success = 'notify_success_' + Session.uid;
+        this.channel_danger = 'notify_danger_' + Session.uid;
+        this.channel_warning = 'notify_warning_' + Session.uid;
+        this.channel_info = 'notify_info_' + Session.uid;
+        this.channel_default = 'notify_default_' + Session.uid;
+        this.all_channels = [
+            this.channel_success,
+            this.channel_danger,
+            this.channel_warning,
+            this.channel_info,
+            this.channel_default,
+        ];
+        this.call('bus_service', 'addChannel', this.channel_success);
+        this.call('bus_service', 'addChannel', this.channel_danger);
+        this.call('bus_service', 'addChannel', this.channel_warning);
+        this.call('bus_service', 'addChannel', this.channel_info);
+        this.call('bus_service', 'addChannel', this.channel_default);
+        this.call(
+            'bus_service', 'on', 'notification',
+            this, this.bus_notification);
+        this.call('bus_service', 'startPolling');
     },
+   
     bus_notification: function(notifications) {
         var self = this;
         _.each(notifications, function (notification) { 
@@ -83,7 +100,14 @@ WebClient.include({
             } else if (channel == self.channel_info) {
                 self.on_message_info(message);
             }
+            if (
+                self.all_channels != null &&
+                self.all_channels.indexOf(channel) > -1
+            ) {
+                self.on_message(message);
+            }
         });
+       this._super(notifications);
     },
     on_message_warning: function(message){
         if(this.notification_manager) {
@@ -98,7 +122,18 @@ WebClient.include({
                 message.title, message.message, message
             );
         }
-    }
+    },
+    on_message: function (message) {
+        return this.call(
+            'notification', 'notify', {
+                type: message.type,
+                title: message.title,
+                message: message.message,
+                sticky: message.sticky,
+                className: message.className,
+            }
+        );
+    },
 });
 
 });
